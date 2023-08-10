@@ -8,6 +8,8 @@ const userSchema: any = new mongoose.Schema({
     password: { type: String, default: null },
     image: { type: String, default: null },
     userId: { type: Number, default: null },
+    userYoutubeAccessToken: { type: String, default: null },
+    userYoutubeRefreshToken: { type: String, default: null },
     isActive: { type: Boolean, default: true },
     isBlock: { type: Boolean, default: false },
 }, { timestamps: true })

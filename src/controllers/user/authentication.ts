@@ -86,6 +86,7 @@ export const googleLogin = async (req: Request, res: Response) => {
                 image: isAlready.picture,
                 userName: isAlready.userName,
                 userId: isAlready.userId,
+                userYoutubeAccessToken: true
             }
             return res.status(200).json(new apiResponse(200, "Login successfully with Google", { response, token }, {}))
         }

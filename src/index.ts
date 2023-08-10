@@ -6,6 +6,8 @@ import http from 'http'
 import cors from 'cors'
 import { mongooseConnection } from './database/connection'
 import * as packageInfo from '../package.json'
+import cron from 'node-cron'
+import axios from 'axios'
 
 
 import { router } from './Routes'
@@ -39,6 +41,15 @@ app.get('/isServerUp', (req: Request, res: Response) => {
 })
 app.use(router)
 app.use('*', bad_gateway)
+
+cron.schedule('0 0 * * *', async () => {
+    try {
+        const response = await axios.get('http://localhost:5000/user/updateReportByCronJob');
+        console.log('API call successful');
+    } catch (error) {
+        console.error('Error calling API:', error.message);
+    }
+});
 
 let server = new http.Server(app);
 export default server

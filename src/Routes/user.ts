@@ -6,8 +6,10 @@ import { userJWT } from '../helper/jwt'
 
 
 
-router.use(userJWT)
+router.get('/updateReportByCronJob', userController.updateReportByCronJob)
 
+router.use(userJWT)
+router.get('/getReportsByPython', userController.getReportsByPython)
 router.post('/getPaypalOrderDetails', userController.getPaypalOrderDetails)
 
 
