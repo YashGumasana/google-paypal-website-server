@@ -16,7 +16,9 @@ export const googleLogin = async (req: Request, res: Response) => {
     try {
         let body = req.body,
             otpFlag = 1,
-            authToken = 0
+            authToken = 0,
+            flag = false;
+
 
 
 
@@ -79,6 +81,12 @@ export const googleLogin = async (req: Request, res: Response) => {
                 generatedOn: (new Date().getTime())
             }, process.env.JWT_TOKEN_SECRET)
 
+            if (isAlready?.userYoutubeAccessToken) {
+                flag = true
+            }
+
+
+
             let response = {
                 email: isAlready.email,
                 firstName: isAlready.given_name,
@@ -86,7 +94,7 @@ export const googleLogin = async (req: Request, res: Response) => {
                 image: isAlready.picture,
                 userName: isAlready.userName,
                 userId: isAlready.userId,
-                userYoutubeAccessToken: true
+                userYoutubeAccessToken: flag
             }
             return res.status(200).json(new apiResponse(200, "Login successfully with Google", { response, token }, {}))
         }

@@ -18,51 +18,58 @@ export const getReportsByPython = async (req: Request, res: Response) => {
 
     try {
         let user: any = req.headers.user
-        let userId = user._id
 
-        let report: any = await new reportModel({}).save()
-        let reportId = report._id
+        if (!user.userYoutubeAccessToken) {
 
-        let filePath = path.join(__dirname, '../../../python/create_report.py');
-        filePath = filePath.replace('build\\', '');
-        console.log('filePath :>> ', filePath);
-        // const quotedFilePath = `"${filePath}"`;
+            let userId = user._id
 
-        // exec(`python ${quotedFilePath}`, (error, stdout) => {
-        //     if (error) {
-        //         console.error('Error executing Python script:', error);
-        //         res.status(500).send('Error generating report');
-        //     } else {
-        //         console.log('stdout :>> ', stdout);
-        //         res.send(stdout);
-        //     }
-        // })
-        // console.log('object :>> ', quotedFilePath);
-        const pythonProcess = spawn('python', [filePath, userId, reportId]);
+            let report: any = await new reportModel({}).save()
+            let reportId = report._id
 
-        pythonProcess.stdout.on('data', (data) => {
-            console.log(`Python Output: ${data}`);
-            if (data.includes('ExpectedResponse')) {
-                console.log('object :>> ');
-                pythonProcess.kill(); // Stop the Python process
-            }
-        });
+            let filePath = path.join(__dirname, '../../../python/create_report.py');
+            filePath = filePath.replace('build\\', '');
+            console.log('filePath :>> ', filePath);
+            // const quotedFilePath = `"${filePath}"`;
 
-        pythonProcess.stderr.on('data', (data) => {
-            console.error(`Python Error: ${data}`);
-            pythonProcess.kill();
+            // exec(`python ${quotedFilePath}`, (error, stdout) => {
+            //     if (error) {
+            //         console.error('Error executing Python script:', error);
+            //         res.status(500).send('Error generating report');
+            //     } else {
+            //         console.log('stdout :>> ', stdout);
+            //         res.send(stdout);
+            //     }
+            // })
+            // console.log('object :>> ', quotedFilePath);
+            const pythonProcess = spawn('python', [filePath, userId, reportId]);
 
-        });
+            pythonProcess.stdout.on('data', (data) => {
+                console.log(`Python Output: ${data}`);
+                if (data.includes('ExpectedResponse')) {
+                    console.log('object :>> ');
+                    pythonProcess.kill(); // Stop the Python process
+                }
+            });
 
-        pythonProcess.on('close', (code) => {
-            console.log(`Python Process Exited with Code: ${code}`);
-            if (code === 0) {
-                return res.status(200).json(new apiResponse(200, 'Success', {}, {}))
-            }
-            else {
-                res.send('error')
-            }
-        });
+            pythonProcess.stderr.on('data', (data) => {
+                console.error(`Python Error: ${data}`);
+                pythonProcess.kill();
+
+            });
+
+            pythonProcess.on('close', (code) => {
+                console.log(`Python Process Exited with Code: ${code}`);
+                if (code === 0) {
+                    return res.status(200).json(new apiResponse(200, 'Success', {}, {}))
+                }
+                else {
+                    res.send('error')
+                }
+            });
+        }
+        else {
+            return res.status(200).json(new apiResponse(200, 'Already Registre', {}, {}))
+        }
     } catch (error) {
         console.log(error)
         return res.status(500).json(new apiResponse(500, 'Internal Server Error', {}, error))

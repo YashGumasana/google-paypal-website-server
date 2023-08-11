@@ -14,7 +14,6 @@ export const userJWT = async (req: Request, res: Response, next: NextFunction) =
     let { authorization, userType } = req.headers,
         result: any
 
-    // console.log('userJWT :>> ', authorization);
     if (authorization) {
         try {
             const access_token = authorization.replace(/"/g, '');
@@ -25,8 +24,10 @@ export const userJWT = async (req: Request, res: Response, next: NextFunction) =
             //     return res.status(403).json(new apiResponse(403, 'Access Denied!', {}, {}))
             // }
 
-            result = await userModel.findOne({ _id: new ObjectId(isverifyToken._id), isActive: true })
+            console.log('object :>> ', isverifyToken);
 
+            result = await userModel.findOne({ _id: new ObjectId(isverifyToken._id), isActive: true })
+            console.log('result :>> ', result);
             req.headers.user = result
 
             return next()
