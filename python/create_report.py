@@ -25,6 +25,7 @@ try:
     # Initialize the YouTube API and get access token and refresh token
     SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl']
     CLIENT_SECRETS_FILE = os.path.join(os.getcwd(), 'python', 'CLIENT.json')
+    print('CLIENT_SECRETS_FILE',CLIENT_SECRETS_FILE)
     flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES)
     credentials = flow.run_local_server()
     youtube_service = build('youtube', 'v3', credentials=credentials)
@@ -32,17 +33,28 @@ try:
     # Store access and refresh token in user model
     access_token = credentials.token
     refresh_token = credentials.refresh_token
-    print(access_token,'++++++++')
-    print(refresh_token,'-------')
-    users_collection.update_one(
-        {'_id': ObjectId(user_id)},
-        {'$set': {
-            'userYoutubeRefreshToken': refresh_token,
-            'userYoutubeAccessToken': access_token
-            }
-        },
-        upsert=False
-    )
+
+    print('access_token',access_token)
+    print('refresh_token',refresh_token)
+    if refresh_token:
+        users_collection.update_one(
+            {'_id': ObjectId(user_id)},
+            {'$set': {
+                'userYoutubeRefreshToken': refresh_token,
+                'userYoutubeAccessToken': access_token
+                }
+            },
+            upsert=False
+        )
+    else:
+        users_collection.update_one(
+            {'_id': ObjectId(user_id)},
+            {'$set': {
+                'userYoutubeAccessToken': access_token
+                }
+            },
+            upsert=False
+        )
 
     # Get ID of the user's YouTube channel
     responseId = youtube_service.channels().list(part='id', mine=True).execute()
