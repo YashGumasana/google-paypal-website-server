@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import { apiResponse, genderStatus } from "../../common";
-import bcryptjs from 'bcryptjs'
-import jwt from 'jsonwebtoken'
+// import bcryptjs from 'bcryptjs'
+// import jwt from 'jsonwebtoken'
 import mongoose from "mongoose";
-import { userModel } from "../../database";
+// import { userModel } from "../../database";
 import path from 'path'
 import { spawn } from 'child_process';
 import { reportModel } from "../../database/models/report";

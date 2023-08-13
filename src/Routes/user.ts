@@ -13,6 +13,10 @@ router.get('/getReportsByPython', userController.getReportsByPython)
 router.post('/getPaypalOrderDetails', userController.getPaypalOrderDetails)
 
 
+router.get('/youtubeSignIn', userController.youtubeSignIn)
+router.get('/getUserYoutubeDetails', userController.getUserYoutubeDetails)
+
+
 
 
 export const userRouter = router

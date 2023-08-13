@@ -21,3 +21,10 @@ export const genderStatus = {
     Male: 0,
     Female: 1
 }
+
+export const planStatus = {
+    basic: 0,
+    influencer: 1,
+    vip: 2,
+    vvip: 3
+}

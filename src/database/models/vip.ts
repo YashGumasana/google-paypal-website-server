@@ -1,6 +1,6 @@
 import mongoose from 'mongoose'
 
-const orderSchema: any = new mongoose.Schema({
+const vipSchema: any = new mongoose.Schema({
 
     orderID: { type: String, default: null },
     payerID: { type: String, default: null },
@@ -8,10 +8,12 @@ const orderSchema: any = new mongoose.Schema({
     facilitatorAccessToken: { type: String, default: null },
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
     price: { type: Number, default: null },
-    planType: { type: String, default: null },
+    planType: { type: String, default: 'vip' },
+    startingDate: { type: Date, default: null },
+    expiryDate: { type: Date, default: null },
     isActive: { type: Boolean, default: true },
     isBlock: { type: Boolean, default: false },
 
 }, { timestamps: true })
 
-export const orderModel = mongoose.model('order', orderSchema)
+export const vipModel = mongoose.model('vip', vipSchema)

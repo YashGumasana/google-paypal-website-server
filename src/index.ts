@@ -11,6 +11,10 @@ import axios from 'axios'
 
 
 import { router } from './Routes'
+import { basicModel } from './database/models/basic'
+import { influencerModel } from './database/models/influencer'
+import { vipModel } from './database/models/vip'
+import { vvipModel } from './database/models/vvip'
 
 const app = express();
 app.use(cors())
@@ -49,6 +53,18 @@ cron.schedule('0 0 * * *', async () => {
     } catch (error) {
         console.error('Error calling API:', error.message);
     }
+});
+
+cron.schedule('* * * * *', async () => {
+    const currentDate = new Date();
+
+    // Delete data where expiry date is before the current date
+    await basicModel.deleteMany({ expiryDate: { $lt: currentDate } });
+    await influencerModel.deleteMany({ expiryDate: { $lt: currentDate } });
+    await vipModel.deleteMany({ expiryDate: { $lt: currentDate } });
+    await vvipModel.deleteMany({ expiryDate: { $lt: currentDate } });
+
+    console.log('Expired data deleted.');
 });
 
 let server = new http.Server(app);

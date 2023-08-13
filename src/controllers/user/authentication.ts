@@ -1,12 +1,9 @@
 import { Request, Response } from "express";
 import { apiResponse, genderStatus } from "../../common";
-import bcryptjs from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import mongoose from "mongoose";
 import { userModel } from "../../database";
-// import { reqInfo } from "../helper";
+import path from 'path'
 
-const ObjectId: any = mongoose.Types.ObjectId
 
 
 
@@ -61,6 +58,7 @@ export const googleLogin = async (req: Request, res: Response) => {
                     image: body.picture,
                     userName: username,
                     userId: body.userId,
+                    isYoutubeSignIn: false
                 }).save()
 
                 const token = jwt.sign({
@@ -80,13 +78,6 @@ export const googleLogin = async (req: Request, res: Response) => {
                 status: "Login",
                 generatedOn: (new Date().getTime())
             }, process.env.JWT_TOKEN_SECRET)
-
-            if (isAlready?.userYoutubeAccessToken) {
-                flag = true
-            }
-
-
-
             let response = {
                 email: isAlready.email,
                 firstName: isAlready.given_name,
@@ -94,7 +85,7 @@ export const googleLogin = async (req: Request, res: Response) => {
                 image: isAlready.picture,
                 userName: isAlready.userName,
                 userId: isAlready.userId,
-                userYoutubeAccessToken: flag
+                isYoutubeSignIn: isAlready.isYoutubeSignIn
             }
             return res.status(200).json(new apiResponse(200, "Login successfully with Google", { response, token }, {}))
         }
@@ -104,4 +95,5 @@ export const googleLogin = async (req: Request, res: Response) => {
         return res.status(500).json(new apiResponse(500, 'Internal Server Error', {}, error))
     }
 }
+
 
