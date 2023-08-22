@@ -9,10 +9,16 @@ const userSchema: any = new mongoose.Schema({
     image: { type: String, default: null },
     userId: { type: Number, default: null },
     isYoutubeSignIn: { type: Boolean, default: false },
-    userYoutubeAccessToken: { type: String, default: null },
-    userYoutubeRefreshToken: { type: String, default: null },
-    channelTitle: { type: String, default: null },
-    channelId: { type: String, default: null },
+    youtubeChannels: [
+        {
+            userYoutubeAccessToken: { type: String, default: null },
+            userYoutubeRefreshToken: { type: String, default: null },
+            channelTitle: { type: String, default: null },
+            channelId: { type: String, default: null },
+            isUse: { type: Boolean, default: false }
+        }
+    ],
+
     isActive: { type: Boolean, default: true },
     isBlock: { type: Boolean, default: false },
 }, { timestamps: true })

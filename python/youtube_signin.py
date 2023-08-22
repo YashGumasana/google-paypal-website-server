@@ -61,6 +61,8 @@ try:
                 'userYoutubeAccessToken': access_token,
                 'channelTitle': channel_title,
                 'channelId': channel_id,
+                'isYoutubeSignIn': True
+
                 }
             },
             upsert=False

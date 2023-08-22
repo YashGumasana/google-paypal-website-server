@@ -9,8 +9,19 @@ const vipSchema: any = new mongoose.Schema({
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'user' },
     price: { type: Number, default: null },
     planType: { type: String, default: 'vip' },
+    planDuration: { type: Number, default: null },
+
     startingDate: { type: Date, default: null },
     expiryDate: { type: Date, default: null },
+    dataExpiryDate: { type: Date, default: null },
+    analyze: {
+        demographics: { type: Boolean, default: false },
+        viewCounts: { type: Boolean, default: false },
+        myVideos: { type: Boolean, default: false },
+        adRevenue: { type: Boolean, default: false },
+        trends: { type: Boolean, default: false }
+    },
+    availableBalance: { type: Number, default: 0 },
     isActive: { type: Boolean, default: true },
     isBlock: { type: Boolean, default: false },
 

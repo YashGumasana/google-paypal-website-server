@@ -15,6 +15,7 @@ import { basicModel } from './database/models/basic'
 import { influencerModel } from './database/models/influencer'
 import { vipModel } from './database/models/vip'
 import { vvipModel } from './database/models/vvip'
+import { planstorageModel } from './database/models/planstorage'
 
 const app = express();
 app.use(cors())
@@ -46,25 +47,49 @@ app.get('/isServerUp', (req: Request, res: Response) => {
 app.use(router)
 app.use('*', bad_gateway)
 
-cron.schedule('0 0 * * *', async () => {
+cron.schedule('* * * * *', async () => {
     try {
-        const response = await axios.get('http://localhost:5000/user/updateReportByCronJob');
-        console.log('API call successful');
+        const response: any = await axios.get('http://localhost:5000/user/analyze_user_youtube');
+        console.log('runnign api', response.data.message);
     } catch (error) {
         console.error('Error calling API:', error.message);
     }
 });
 
 cron.schedule('* * * * *', async () => {
-    const currentDate = new Date();
+    try {
 
-    // Delete data where expiry date is before the current date
-    await basicModel.deleteMany({ expiryDate: { $lt: currentDate } });
-    await influencerModel.deleteMany({ expiryDate: { $lt: currentDate } });
-    await vipModel.deleteMany({ expiryDate: { $lt: currentDate } });
-    await vvipModel.deleteMany({ expiryDate: { $lt: currentDate } });
+        const currentDate = new Date();
 
-    console.log('Expired data deleted.');
+
+        //  do isActive : false
+        const filter = {
+            expiryDate: { $lt: currentDate }
+        };
+        const update = {
+            $set: { isActive: false }
+        };
+        await basicModel.updateMany(filter, update);
+        await influencerModel.updateMany(filter, update);
+        await vipModel.updateMany(filter, update);
+        await vvipModel.updateMany(filter, update);
+        await planstorageModel.updateMany(filter, update);
+
+
+
+        // Delete data where expiry date is before the current date
+        await basicModel.deleteMany({ dataExpiryDate: { $lt: currentDate } });
+        await influencerModel.deleteMany({ dataExpiryDate: { $lt: currentDate } });
+        await vipModel.deleteMany({ dataExpiryDate: { $lt: currentDate } });
+        await vvipModel.deleteMany({ dataExpiryDate: { $lt: currentDate } });
+        await planstorageModel.deleteMany({ dataExpiryDate: { $lt: currentDate } });
+
+        console.log('Expired data deleted.');
+
+    } catch (error) {
+        console.error('Error Is Detected In Expired data delete:', error.message);
+
+    }
 });
 
 let server = new http.Server(app);
