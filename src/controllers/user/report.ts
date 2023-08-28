@@ -162,6 +162,7 @@ export const analyze_user_youtube = async (req: Request, res: Response) => {
                                     userId: 1,
                                     isActive: 1,
                                     isBlock: 1,
+                                    analyze: 1,
                                     youtubeChannels: {
                                         $filter: {
                                             input: '$youtubeChannels',
@@ -193,38 +194,14 @@ export const analyze_user_youtube = async (req: Request, res: Response) => {
 
                     let createdBy = activePlan.createdBy,
                         channelId = activePlan.userDetails[0].youtubeChannels[0].channelId,
-                        analyze = activePlan.analyze
+                        analyze = activePlan.userDetails[0].analyze
 
                     console.log('createdBy :>> ', createdBy);
                     console.log('channelId :>> ', channelId);
+                    console.log('analyze :>> ', analyze);
 
                     const userAvailableBalance = activePlan.availableBalance;
                     if (userAvailableBalance >= 0.1) {
-                        // Deduct $0.1 from user's totalCost
-                        activePlan.availableBalance -= 0.1;
-
-                        await planstorageModel.findOneAndUpdate({ createdBy: createdBy, isActive: true }, { availableBalance: activePlan.availableBalance })
-                        // Update the totalCost in the corresponding schema collection
-                        const planType = activePlan.planType;
-                        switch (planType) {
-                            case 'basic':
-                                await basicModel.findOneAndUpdate({ createdBy: createdBy, isActive: true }, { availableBalance: activePlan.availableBalance });
-                                break;
-                            case 'influencer':
-                                await influencerModel.findOneAndUpdate({ createdBy: createdBy, isActive: true }, { availableBalance: activePlan.availableBalance });
-                                break;
-                            case 'vip':
-                                await vipModel.findOneAndUpdate({ createdBy: createdBy, isActive: true }, { availableBalance: activePlan.availableBalance });
-                                break;
-                            case 'vvip':
-                                await vvipModel.findOneAndUpdate({ createdBy: createdBy, isActive: true }, { availableBalance: activePlan.availableBalance });
-                                break;
-                            default:
-                                // Handle other plan types if needed
-                                break;
-                        }
-
-
 
                         const pythonScripts = {
                             demographics: 'analyze_demographics.py',
@@ -236,83 +213,45 @@ export const analyze_user_youtube = async (req: Request, res: Response) => {
                         const scriptsToRun = [];
 
                         // Determine which scripts to run based on the analyzeConfig
-                        Object.keys(analyze).forEach(flag => {
+                        Object.keys(analyze).forEach(async flag => {
                             if (analyze[flag] && pythonScripts[flag]) {
+                                console.log('analyze', analyze)
+                                console.log('flag', flag)
+
+
+                                console.log('pythonScripts[flag]', pythonScripts[flag])
                                 scriptsToRun.push(pythonScripts[flag]);
+                                console.log('scriptsToRun', scriptsToRun)
                             }
                         });
-                        // if (scriptsToRun.length > 0) {
-                        //     scriptsToRun.forEach(async (script) => {
-
-                        //         // create analyze  
-                        //         let report: any = await new reportModel({}).save()
-                        //         let reportId = report._id
-
-                        //         let filePath = path.join(__dirname, `../../../python/analyze/${script}`);
-                        //         filePath = filePath.replace('build\\', '');
-                        //         console.log(`Running script: ${script}`);
-
-                        //         const pythonProcess = spawn('python', [filePath, createdBy, channelId, reportId]);
 
 
-
-
-
-                        //         pythonProcess.on('error', (error) => {
-                        //             console.error(`Python Process Error: ${error}`);
-                        //             pythonProcess.kill(); // Terminate the Python process
-
-                        //             // Handle any other cleanup tasks if needed
-                        //             // For example, close any open connections, release resources, etc.
-                        //         });
-
-                        //         pythonProcess.stdout.on('data', (data) => {
-                        //             console.log(`Python Output: ${data}`);
-                        //             if (data.includes('error')) {
-                        //                 console.log('Error detected. Terminating Python process...');
-                        //                 pythonProcess.kill();
-                        //             }
-                        //         });
-
-                        //         pythonProcess.stderr.on('data', (data) => {
-                        //             console.error(`Python Error: ${data}`);
-                        //             pythonProcess.kill();
-                        //         });
-
-                        //         pythonProcess.on('close', async (code) => {
-                        //             console.log(`Python Process Exited with Code: ${code}`);
-                        //             if (code === 0) {
-                        //                 pythonProcess.kill();
-
-                        //                 return res.status(200).json(new apiResponse(200, `${script} running successfully`, {}, {}))
-                        //             }
-                        //             else {
-                        //                 pythonProcess.kill();
-
-                        //                 return res.status(500).json(new apiResponse(500, 'Python Internal Server Error', {}, {}))
-                        //             }
-                        //         });
-                        //         // The rest of your process event handlers and response handling can remain unchanged
-                        //         // ...
-
-                        //     });
-
-
-
-                        //     Promise.all(promises)
-                        //     .then(results => {
-                        //         return res.status(200).json(new apiResponse(200, results.join(', '), {}, {}));
-                        //     })
-                        //     .catch(error => {
-                        //         console.error(error);
-                        //         return res.status(500).json(new apiResponse(500, 'Error while running Python scripts', {}, {}));
-                        //     });
-                        // } else {
-                        //     return res.status(200).json(new apiResponse(200, 'No analysis needed', {}, {}));
-                        // }
+                        console.log('scriptsToRun', scriptsToRun)
 
                         if (scriptsToRun.length > 0) {
                             const promises = scriptsToRun.map(async (script) => {
+                                activePlan.availableBalance -= 0.1;
+
+                                await planstorageModel.findOneAndUpdate({ createdBy: createdBy, isActive: true }, { availableBalance: activePlan.availableBalance })
+                                // Update the totalCost in the corresponding schema collection
+                                const planType = activePlan.planType;
+                                switch (planType) {
+                                    case 'basic':
+                                        await basicModel.findOneAndUpdate({ createdBy: createdBy, isActive: true }, { availableBalance: activePlan.availableBalance });
+                                        break;
+                                    case 'influencer':
+                                        await influencerModel.findOneAndUpdate({ createdBy: createdBy, isActive: true }, { availableBalance: activePlan.availableBalance });
+                                        break;
+                                    case 'vip':
+                                        await vipModel.findOneAndUpdate({ createdBy: createdBy, isActive: true }, { availableBalance: activePlan.availableBalance });
+                                        break;
+                                    case 'vvip':
+                                        await vvipModel.findOneAndUpdate({ createdBy: createdBy, isActive: true }, { availableBalance: activePlan.availableBalance });
+                                        break;
+                                    default:
+                                        // Handle other plan types if needed
+                                        break;
+                                }
                                 let report = await new reportModel({}).save();
                                 let reportId = report._id;
 
@@ -365,7 +304,7 @@ export const analyze_user_youtube = async (req: Request, res: Response) => {
                             //     return res.status(500).json(new apiResponse(500, 'Error while running Python scripts', {}, {}));
                             // }
                         } else {
-                            return res.status(200).json(new apiResponse(200, 'No analysis needed', {}, {}));
+                            return res.status(200).json(new apiResponse(200, 'No analysis done', {}, {}));
                         }
 
                         return res.status(200).json(new apiResponse(200, 'Scripts executed successfully', {}, {}));
@@ -420,8 +359,9 @@ export const get_all_report_of_user = async (req: Request, res: Response) => {
     let user: any = req.headers.user
     try {
 
-        const report = await reportModel.find({ createdBy: ObjectId(user._id), isActive: true })
-        return res.status(200).json(new apiResponse(200, 'Internal Server Error', { report }, {}))
+        // const userIdString = user._id.toString();
+        const report = await reportModel.find({ createdBy: ObjectId(user._id) }).sort({ createdAt: -1 });
+        return res.status(200).json(new apiResponse(200, 'success', { report }, {}))
 
     } catch (error) {
         console.log(error)

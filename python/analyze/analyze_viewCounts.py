@@ -47,9 +47,10 @@ try:
             {'_id': ObjectId(reportId)},
             {'$set': {
                 'channelId':channelId,
-                'createdBy':createdBy, 
+                'createdBy':ObjectId(createdBy), 
                 'reports':True,
                 'last_report_date': datetime.datetime.now(),
+                'analyze':'viewCounts',
                 'statistics': {
                     'viewCount': viewCount,
                     'subscriberCount': subscriberCount,

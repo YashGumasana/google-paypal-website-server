@@ -92,5 +92,16 @@ cron.schedule('* * * * *', async () => {
     }
 });
 
+
 let server = new http.Server(app);
+
+//socket
+import WebSocket from 'ws'
+const wss = new WebSocket.Server({ server });
+wss.on('connection', (ws: any) => {
+    ws.on('message', (message: any) => {
+        console.log(`Received message: ${message}`);
+    });
+});
+
 export default server

@@ -99,7 +99,7 @@ export const getPaypalOrderDetails = async (req: Request, res: Response) => {
                             startingDate: document.startingDate,
                             expiryDate: document.expiryDate,
                             dataExpiryDate: document.dataExpiryDate,
-                            analyze: document.analyze,
+                            // analyze: document.analyze,
                             availableBalance: document.availableBalance,
                             isActive: document.isActive,
                             isBlock: document.isBlock,
@@ -154,7 +154,7 @@ async function handleBasicPlan(body: any, planType: any) {
 
             await basicModel.findOneAndUpdate({
                 createdBy: ObjectId(body.createdBy), isActive: true
-            }, { startingDate: startingDate, expiryDate: expiryDate, dataExpiryDate: sixMonthsLater, analyze: body.analyze }, { new: true });
+            }, { startingDate: startingDate, expiryDate: expiryDate, dataExpiryDate: sixMonthsLater /*,analyze: body.analyze */ }, { new: true });
         }
 
     } else {
@@ -187,7 +187,7 @@ async function handleInfluencerPlan(body: any, planType: any) {
 
             await influencerModel.findOneAndUpdate({
                 createdBy: ObjectId(body.createdBy), isActive: true
-            }, { startingDate: startingDate, expiryDate: expiryDate, dataExpiryDate: sixMonthsLater, analyze: body.analyze }, { new: true });
+            }, { startingDate: startingDate, expiryDate: expiryDate, dataExpiryDate: sixMonthsLater/*, analyze: body.analyze*/ }, { new: true });
             // console.log('Plan extended for 1 day:', response);
         }
         // Deactivate the active plan if a different type is purchased
@@ -221,7 +221,7 @@ async function handleVipPlan(body: any, planType: any) {
 
             const response = await vipModel.findOneAndUpdate({
                 createdBy: ObjectId(body.createdBy), isActive: true
-            }, { startingDate: startingDate, expiryDate: expiryDate, dataExpiryDate: sixMonthsLater, analyze: body.analyze }, { new: true });
+            }, { startingDate: startingDate, expiryDate: expiryDate, dataExpiryDate: sixMonthsLater/*, analyze: body.analyze*/ }, { new: true });
         }
 
     } else {
@@ -253,7 +253,7 @@ async function handleVvipPlan(body: any, planType: any) {
 
             await vvipModel.findOneAndUpdate({
                 createdBy: ObjectId(body.createdBy), isActive: true
-            }, { startingDate: startingDate, expiryDate: expiryDate, dataExpiryDate: sixMonthsLater, analyze: body.analyze }, { new: true });
+            }, { startingDate: startingDate, expiryDate: expiryDate, dataExpiryDate: sixMonthsLater/*, analyze: body.analyze*/ }, { new: true });
         }
     } else {
         console.log('new data --->', body.planType)

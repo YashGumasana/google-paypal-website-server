@@ -18,7 +18,13 @@ const userSchema: any = new mongoose.Schema({
             isUse: { type: Boolean, default: false }
         }
     ],
-
+    analyze: {
+        demographics: { type: Boolean, default: false },
+        viewCounts: { type: Boolean, default: false },
+        myVideos: { type: Boolean, default: false },
+        adRevenue: { type: Boolean, default: false },
+        trends: { type: Boolean, default: false }
+    },
     isActive: { type: Boolean, default: true },
     isBlock: { type: Boolean, default: false },
 }, { timestamps: true })

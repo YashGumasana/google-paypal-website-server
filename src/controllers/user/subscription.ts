@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { apiResponse } from "../../common";
 import { planstorageModel } from "../../database/models/planstorage";
 import mongoose from "mongoose";
+import { plans } from "../../common/plan";
 const ObjectId: any = mongoose.Types.ObjectId
 
 
@@ -20,6 +21,15 @@ export const getActivePlan = async (req: Request, res: Response) => {
         else {
             return res.status(200).json(new apiResponse(200, "Successfully get active plan", {}, {}))
         }
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json(new apiResponse(500, 'Internal Server Error', {}, error))
+    }
+}
+
+export const make_plan = async (req: Request, res: Response) => {
+    try {
+        return res.status(200).json(new apiResponse(200, 'Plan Details', { plans: plans }, {}))
     } catch (error) {
         console.log(error)
         return res.status(500).json(new apiResponse(500, 'Internal Server Error', {}, error))
