@@ -49,7 +49,8 @@ app.use('*', bad_gateway)
 
 cron.schedule('* * * * *', async () => {
     try {
-        const response: any = await axios.get('http://localhost:5000/user/analyze_user_youtube');
+        // const response: any = await axios.get('http://localhost:5000/user/analyze_user_youtube');
+        const response: any = await axios.get('https://youtubeanalyze.onrender.com//user/analyze_user_youtube');
         console.log('runnign api', response.data.message);
     } catch (error) {
         console.error('Error calling API:', error.message);
