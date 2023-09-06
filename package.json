@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "engines": {
+    "python": "3.8"
+  },
   "scripts": {
     "build": "tsc",
     "clean": "npx rimraf ./build",
