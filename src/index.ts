@@ -47,51 +47,51 @@ app.get('/isServerUp', (req: Request, res: Response) => {
 app.use(router)
 app.use('*', bad_gateway)
 
-cron.schedule('* * * * *', async () => {
-    try {
-        // const response: any = await axios.get('http://localhost:5000/user/analyze_user_youtube');
-        const response: any = await axios.get('https://youtube-analyze.onrender.com/user/analyze_user_youtube');
-        console.log('runnign api', response.data.message);
-    } catch (error) {
-        console.error('Error calling API:', error.message);
-    }
-});
+// cron.schedule('* * * * *', async () => {
+//     try {
+//         // const response: any = await axios.get('http://localhost:5000/user/analyze_user_youtube');
+//         const response: any = await axios.get('https://youtube-analyze.onrender.com/user/analyze_user_youtube');
+//         console.log('runnign api', response.data.message);
+//     } catch (error) {
+//         console.error('Error calling API:', error.message);
+//     }
+// });
 
-cron.schedule('* * * * *', async () => {
-    try {
+// cron.schedule('* * * * *', async () => {
+//     try {
 
-        const currentDate = new Date();
-
-
-        //  do isActive : false
-        const filter = {
-            expiryDate: { $lt: currentDate }
-        };
-        const update = {
-            $set: { isActive: false }
-        };
-        await basicModel.updateMany(filter, update);
-        await influencerModel.updateMany(filter, update);
-        await vipModel.updateMany(filter, update);
-        await vvipModel.updateMany(filter, update);
-        await planstorageModel.updateMany(filter, update);
+//         const currentDate = new Date();
 
 
+//         //  do isActive : false
+//         const filter = {
+//             expiryDate: { $lt: currentDate }
+//         };
+//         const update = {
+//             $set: { isActive: false }
+//         };
+//         await basicModel.updateMany(filter, update);
+//         await influencerModel.updateMany(filter, update);
+//         await vipModel.updateMany(filter, update);
+//         await vvipModel.updateMany(filter, update);
+//         await planstorageModel.updateMany(filter, update);
 
-        // Delete data where expiry date is before the current date
-        await basicModel.deleteMany({ dataExpiryDate: { $lt: currentDate } });
-        await influencerModel.deleteMany({ dataExpiryDate: { $lt: currentDate } });
-        await vipModel.deleteMany({ dataExpiryDate: { $lt: currentDate } });
-        await vvipModel.deleteMany({ dataExpiryDate: { $lt: currentDate } });
-        await planstorageModel.deleteMany({ dataExpiryDate: { $lt: currentDate } });
 
-        console.log('Expired data deleted.');
 
-    } catch (error) {
-        console.error('Error Is Detected In Expired data delete:', error.message);
+//         // Delete data where expiry date is before the current date
+//         await basicModel.deleteMany({ dataExpiryDate: { $lt: currentDate } });
+//         await influencerModel.deleteMany({ dataExpiryDate: { $lt: currentDate } });
+//         await vipModel.deleteMany({ dataExpiryDate: { $lt: currentDate } });
+//         await vvipModel.deleteMany({ dataExpiryDate: { $lt: currentDate } });
+//         await planstorageModel.deleteMany({ dataExpiryDate: { $lt: currentDate } });
 
-    }
-});
+//         console.log('Expired data deleted.');
+
+//     } catch (error) {
+//         console.error('Error Is Detected In Expired data delete:', error.message);
+
+//     }
+// });
 
 
 let server = new http.Server(app);
