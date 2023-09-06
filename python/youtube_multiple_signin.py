@@ -19,11 +19,13 @@ users_collection = db['users']
 def update_user_channel_info(user_id, access_token, refresh_token, channel_id, channel_title):
 
 
-    existing_channel = users_collection.find_one(
-        {'_id': ObjectId(user_id), 'youtube.channelId': channel_id}
-    )
+    existing_channel = users_collection.find_one({
+        '_id': ObjectId(user_id),
+        'youtubeChannels': {'$elemMatch': {'channelId': channel_id}}
+    })
 
     if existing_channel:
+        
         return False 
 
 
@@ -68,7 +70,8 @@ def update_user_channel_info(user_id, access_token, refresh_token, channel_id, c
         upsert=False
     )
 
-    return res
+    if res:
+        return True
 
     # res = users_collection.update_one(
     #     {'_id': ObjectId(user_id)},
@@ -104,10 +107,11 @@ try:
 
         res = update_user_channel_info(user_id, access_token, refresh_token, channel_id, channel_title)
 
-        if res.matched_count == 0:
-            print(f"No document matched for channel {channel_title} update.")
+        # if res.matched_count == 0:
+        if res:
+            print(f"document matched for channel {channel_title} update.")
         else:
-            print(f"Document updated successfully for channel {channel_title}. Matched {res.matched_count} documents.")
+            print(f"no document matched for channel {channel_title} update.")
 
 except Exception as e:
     print("error:", str(e))

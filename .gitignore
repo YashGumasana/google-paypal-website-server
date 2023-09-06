@@ -42,7 +42,7 @@ build/Release
 node_modules/
 jspm_packages/
 build/
-python/CLIENT.json
+# python/CLIENT.json
 
 # Snowpack dependency directory (https://snowpack.dev/)
 web_modules/
