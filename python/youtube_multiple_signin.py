@@ -83,6 +83,7 @@ def update_user_channel_info(user_id, access_token, refresh_token, channel_id, c
 
 try:
     user_id = sys.argv[1]
+    print("user_id",user_id)
 
     # Initialize the YouTube API and get access token and refresh token
     SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl']
