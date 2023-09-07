@@ -17,6 +17,11 @@ export const youtubeSignIn = async (req: Request, res: Response) => {
 
         let userId = user._id
 
+
+        let pythonPath = path.join(process.cwd(), 'venv', 'Scripts', 'python.exe');
+        console.log('__dirname', __dirname)
+        console.log('pythonPath', pythonPath)
+
         let filePath = path.join(__dirname, '../../../python/youtube_multiple_signin.py');
         let packageInstallPath = path.join(__dirname, '../../../python/requirements.txt');
         console.log('filePath before build :>> ', filePath);
@@ -46,7 +51,9 @@ export const youtubeSignIn = async (req: Request, res: Response) => {
         //     }
         // });
         console.log('Python dependencies installed successfully');
-        const pythonProcess = spawn('python', [filePath, userId]);
+        // const pythonProcess = spawn('python', [filePath, userId]);
+        const pythonProcess = spawn(pythonPath, [filePath, userId]);
+        console.log('Python   ');
 
         pythonProcess.stdout.on('data', (data) => {
             console.log(`Python Output: ${data}`);
