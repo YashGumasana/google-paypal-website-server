@@ -1,6 +1,7 @@
 print("Hello")
 import os
 import sys
+print(sys.executable)
 from pymongo import MongoClient
 from google.oauth2.credentials import Credentials
 from bson import ObjectId
