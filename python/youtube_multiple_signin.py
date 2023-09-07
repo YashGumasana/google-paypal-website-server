@@ -1,3 +1,4 @@
+print("Hello")
 import os
 import sys
 from pymongo import MongoClient
