@@ -19,6 +19,7 @@ export const youtubeSignIn = async (req: Request, res: Response) => {
 
 
         let pythonPath = path.join(process.cwd(), 'venv', 'Scripts', 'python.exe');
+        pythonPath = pythonPath.replace('/src', '');
         console.log('__dirname', __dirname)
         console.log('pythonPath', pythonPath)
 
