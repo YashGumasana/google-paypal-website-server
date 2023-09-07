@@ -40,51 +40,52 @@ export const youtubeSignIn = async (req: Request, res: Response) => {
         installPythonDeps.on('close', (code) => {
             if (code === 0) {
                 console.log('Python dependencies installed successfully');
+                const pythonProcess = spawn('python', [filePath, userId]);
+
+                pythonProcess.stdout.on('data', (data) => {
+                    console.log(`Python Output: ${data}`);
+                    if (data.includes('error')) {
+                        console.log('Error detected. Terminating Python process...');
+                        pythonProcess.kill();
+                    }
+
+                });
+
+                pythonProcess.stderr.on('data', (data) => {
+                    console.error(`Python Error: ${data}`);
+                    pythonProcess.kill();
+
+                });
+
+                pythonProcess.on('close', async (code) => {
+                    console.log(`Python Process Exited with Code: ${code}`);
+                    if (code === 0) {
+                        // await userModel.findOneAndUpdate({ _id: userId }, { isYoutubeSignIn: true }, { new: true })
+                        pythonProcess.kill();
+
+                        return res.status(200).json(new apiResponse(200, 'Login Successfull with Youtube', {}, {}))
+                    }
+                    else {
+                        pythonProcess.kill();
+
+                        return res.status(500).json(new apiResponse(500, 'Internal Server Error', {}, {}))
+                    }
+                });
+
+                pythonProcess.on('error', (error) => {
+                    console.error(`Python Process Error: ${error}`);
+                    pythonProcess.kill(); // Terminate the Python process
+
+                    // Handle any other cleanup tasks if needed
+                    // For example, close any open connections, release resources, etc.
+                });
                 // Now you can proceed to run your Python script
             } else {
                 console.error(`Error: Python dependency installation failed with code ${code}`);
             }
         });
 
-        const pythonProcess = spawn('python', [filePath, userId]);
 
-        pythonProcess.stdout.on('data', (data) => {
-            console.log(`Python Output: ${data}`);
-            if (data.includes('error')) {
-                console.log('Error detected. Terminating Python process...');
-                pythonProcess.kill();
-            }
-
-        });
-
-        pythonProcess.stderr.on('data', (data) => {
-            console.error(`Python Error: ${data}`);
-            pythonProcess.kill();
-
-        });
-
-        pythonProcess.on('close', async (code) => {
-            console.log(`Python Process Exited with Code: ${code}`);
-            if (code === 0) {
-                // await userModel.findOneAndUpdate({ _id: userId }, { isYoutubeSignIn: true }, { new: true })
-                pythonProcess.kill();
-
-                return res.status(200).json(new apiResponse(200, 'Login Successfull with Youtube', {}, {}))
-            }
-            else {
-                pythonProcess.kill();
-
-                return res.status(500).json(new apiResponse(500, 'Internal Server Error', {}, {}))
-            }
-        });
-
-        pythonProcess.on('error', (error) => {
-            console.error(`Python Process Error: ${error}`);
-            pythonProcess.kill(); // Terminate the Python process
-
-            // Handle any other cleanup tasks if needed
-            // For example, close any open connections, release resources, etc.
-        });
 
     } catch (error) {
         console.log(error)
