@@ -8,6 +8,7 @@ import { userJWT } from '../helper/jwt'
 router.get('/analyze_user_youtube', userController.analyze_user_youtube)
 router.get('/updateReportByCronJob', userController.updateReportByCronJob)
 router.get('/installPackage', userController.installPackage)
+router.get('/youtubeSignIn1', userController.youtubeSignIn1)
 
 
 //subscription without jwt

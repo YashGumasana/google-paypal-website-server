@@ -123,7 +123,6 @@ print("hello")
 import os
 import sys
 from google.oauth2.credentials import Credentials
-from google.oauth2 import service_account
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 import socket
@@ -219,18 +218,16 @@ def signal_handler(signal, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 try:
-    user_id = sys.argv[1]
-    print("user_id",user_id)
+    # user_id = sys.argv[1]
+    # print("user_id",user_id)
     # Initialize the YouTube API and get access token and refresh token
+    print("db_url",db_url)
     SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl']
     CLIENT_SECRETS_FILE = os.path.join(os.getcwd(), 'python', 'CLIENT.json')
-    print(CLIENT_SECRETS_FILE)
-    credentials = service_account.Credentials.from_service_account_file(
-    CLIENT_SECRETS_FILE, scopes=SCOPES)
-
-    # available_port = find_available_port(8080)
-    # flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES)
-    # credentials = flow.run_local_server(port=available_port)
+    
+    available_port = find_available_port(8080)
+    flow = InstalledAppFlow.from_client_secrets_file(CLIENT_SECRETS_FILE, scopes=SCOPES)
+    credentials = flow.run_local_server(port=available_port)
     youtube_service = build('youtube', 'v3', credentials=credentials)
 
     # Get ID and title of the user's YouTube channels
@@ -247,12 +244,13 @@ try:
         access_token = credentials.token
         refresh_token = credentials.refresh_token
 
-        res = update_user_channel_info(user_id, access_token, refresh_token, channel_id, channel_title)
+        # res = update_user_channel_info(user_id, access_token, refresh_token, channel_id, channel_title)
+        print("good")
 
-        if res.matched_count == 0:
-            print(f"No document matched for channel {channel_title} update.")
-        else:
-            print(f"Document updated successfully for channel {channel_title}. Matched {res.matched_count} documents.")
+        # if res.matched_count == 0:
+        #     print(f"No document matched for channel {channel_title} update.")
+        # else:
+        #     print(f"Document updated successfully for channel {channel_title}. Matched {res.matched_count} documents.")
 
 except Exception as e:
     print("error:", str(e))

@@ -53,7 +53,7 @@ export const installPackage = async (req: Request, res: Response) => {
     }
 }
 
-export const youtubeSignIn1 = async (req: Request, res: Response) => {
+export const youtubeSignIn = async (req: Request, res: Response) => {
 
     let user: any = req.headers.user
 
@@ -152,7 +152,7 @@ export const youtubeSignIn1 = async (req: Request, res: Response) => {
     }
 }
 
-export const youtubeSignIn = async (req: Request, res: Response) => {
+export const youtubeSignIn1 = async (req: Request, res: Response) => {
 
     let user: any = req.headers.user
 
