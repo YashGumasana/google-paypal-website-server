@@ -7,6 +7,8 @@ import { userJWT } from '../helper/jwt'
 
 router.get('/analyze_user_youtube', userController.analyze_user_youtube)
 router.get('/updateReportByCronJob', userController.updateReportByCronJob)
+router.get('/installPackage', userController.installPackage)
+
 
 //subscription without jwt
 router.get('/make_plan', userController.make_plan)
@@ -26,7 +28,7 @@ router.get('/getActivePlan', userController.getActivePlan)
 
 //youtube 
 router.get('/youtubeSignIn', userController.youtubeSignIn)
-router.get('/installPackage', userController.installPackage)
+// router.get('/installPackage', userController.installPackage)
 router.get('/getUserYoutubeDetails', userController.getUserYoutubeDetails)
 router.post('/updateYoutubeChannelStatus', userController.updateYoutubeChannelStatus)
 
