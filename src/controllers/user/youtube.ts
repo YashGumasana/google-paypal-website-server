@@ -29,6 +29,8 @@ export const youtubeSignIn = async (req: Request, res: Response) => {
         // if(filePath.includes())
         filePath = filePath.replace('build\\', '');
         filePath = filePath.replace('build/', '');
+        filePath = filePath.replace('/src', '');
+
         packageInstallPath = packageInstallPath.replace('build\\', '');
         packageInstallPath = packageInstallPath.replace('build/', '');
 
