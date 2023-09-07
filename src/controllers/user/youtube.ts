@@ -53,7 +53,7 @@ export const installPackage = async (req: Request, res: Response) => {
     }
 }
 
-export const youtubeSignIn = async (req: Request, res: Response) => {
+export const youtubeSignIn1 = async (req: Request, res: Response) => {
 
     let user: any = req.headers.user
 
@@ -145,6 +145,65 @@ export const youtubeSignIn = async (req: Request, res: Response) => {
             // For example, close any open connections, release resources, etc.
         });
 
+
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json(new apiResponse(500, 'Internal Server Error', {}, error))
+    }
+}
+
+export const youtubeSignIn = async (req: Request, res: Response) => {
+
+    let user: any = req.headers.user
+
+    try {
+        let userId = user._id
+
+        let filePath = path.join(__dirname, '../../../python/youtube_multiple_signin.py');
+        filePath = filePath.replace('build\\', '');
+        console.log('filePath :>> ', filePath);
+
+        const pythonProcess = spawn('python', [filePath, userId]);
+
+        pythonProcess.stdout.on('data', (data) => {
+            console.log(`Python Output: ${data}`);
+            if (data.includes('error')) {
+                console.log('Error detected. Sending termination signal to Python process...');
+                // Send a termination signal to the Python process
+                process.kill(pythonProcess.pid, 'SIGTERM');
+            }
+        });
+
+        pythonProcess.stderr.on('data', (data) => {
+            console.error(`Python Error: ${data}`);
+            // Send a termination signal to the Python process
+            process.kill(pythonProcess.pid, 'SIGTERM');
+        });
+
+        pythonProcess.on('close', async (code) => {
+            console.log(`Python Process Exited with Code: ${code}`);
+            if (code === 0) {
+                // Handle successful completion
+                // await userModel.findOneAndUpdate({ _id: userId }, { isYoutubeSignIn: true }, { new: true });
+                console.log('Login Successful with Youtube');
+                return res.status(200).json(new apiResponse(200, 'Login Successful with Youtube', {}, {}));
+            } else {
+                console.log('Internal Server Error');
+                return res.status(500).json(new apiResponse(500, 'Internal Server Error', {}, {}));
+            }
+        });
+
+        // Handle the termination signal from Node.js
+        process.on('SIGTERM', () => {
+            console.log('Received SIGTERM signal. Terminating Python process...');
+            pythonProcess.kill('SIGINT'); // Send SIGINT signal to the Python process
+        });
+
+        pythonProcess.on('error', (error) => {
+            console.error(`Python Process Error: ${error}`);
+            // Terminate the Python process
+            process.kill(pythonProcess.pid, 'SIGTERM');
+        });
 
     } catch (error) {
         console.log(error)
