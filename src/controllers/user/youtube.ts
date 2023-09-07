@@ -1,7 +1,7 @@
 import { Request, Response } from "express"
 import { apiResponse } from "../../common"
 import { userModel } from "../../database"
-import { spawn } from "child_process"
+import { exec, spawn } from "child_process"
 import path from "path"
 import mongoose from "mongoose";
 const ObjectId: any = mongoose.Types.ObjectId
@@ -13,13 +13,28 @@ export const youtubeSignIn = async (req: Request, res: Response) => {
 
     try {
 
+        exec('python --version', (error, stdout, stderr) => {
+            if (error) {
+                console.error('Python is not installed:', error.message);
+            } else {
+                console.log('Python version:', stdout);
 
+                // Check if the required Python package is installed
+                exec('python -c "import pymongo"', (pkgError, pkgStdout, pkgStderr) => {
+                    if (pkgError) {
+                        console.error('pymongo is not installed:', pkgError.message);
+                    } else {
+                        console.log('pymongo is installed');
+                    }
+                });
+            }
+        });
 
         let userId = user._id
 
 
-        // let pythonPath = path.join(process.cwd(), 'venv', 'Scripts', 'python.exe');
-        let pythonPath = path.join(process.cwd(), 'venv', 'bin', 'python');
+        let pythonPath = path.join(process.cwd(), 'venv', 'Scripts', 'python');
+        // let pythonPath = path.join(process.cwd(), 'venv', 'bin', 'python');
         pythonPath = pythonPath.replace('/src', '');
         console.log('__dirname', __dirname)
         console.log('pythonPath', pythonPath)
@@ -38,64 +53,49 @@ export const youtubeSignIn = async (req: Request, res: Response) => {
         console.log('filePath :>> ', filePath);
 
         // const installPythonDeps = spawn('pip', ['install', '-r', packageInstallPath]);
-        // installPythonDeps.stdout.on('data', (data) => {
-        //     console.log(`stdout: ${data}`);
+
+        // console.log('Python dependencies installed successfully');
+        // // const pythonProcess = spawn('python', [filePath, userId]);
+        // const pythonProcess = spawn(pythonPath, [filePath, userId]);
+        // console.log('Python   ');
+
+        // pythonProcess.stdout.on('data', (data) => {
+        //     console.log(`Python Output: ${data}`);
+        //     if (data.includes('error')) {
+        //         console.log('Error detected. Terminating Python process...');
+        //         pythonProcess.kill();
+        //     }
+
         // });
 
-        // installPythonDeps.stderr.on('data', (data) => {
-        //     console.error(`stderr: ${data}`);
+        // pythonProcess.stderr.on('data', (data) => {
+        //     console.error(`Python Error: ${data}`);
+        //     pythonProcess.kill();
+
         // });
 
-        // installPythonDeps.on('close', (code) => {
+        // pythonProcess.on('close', async (code) => {
+        //     console.log(`Python Process Exited with Code: ${code}`);
         //     if (code === 0) {
+        //         // await userModel.findOneAndUpdate({ _id: userId }, { isYoutubeSignIn: true }, { new: true })
+        //         pythonProcess.kill();
 
-        //         // Now you can proceed to run your Python script
-        //     } else {
-        //         console.error(`Error: Python dependency installation failed with code ${code}`);
+        //         return res.status(200).json(new apiResponse(200, 'Login Successfull with Youtube', {}, {}))
+        //     }
+        //     else {
+        //         pythonProcess.kill();
+
+        //         return res.status(500).json(new apiResponse(500, 'Internal Server Error', {}, {}))
         //     }
         // });
-        console.log('Python dependencies installed successfully');
-        // const pythonProcess = spawn('python', [filePath, userId]);
-        const pythonProcess = spawn(pythonPath, [filePath, userId]);
-        console.log('Python   ');
 
-        pythonProcess.stdout.on('data', (data) => {
-            console.log(`Python Output: ${data}`);
-            if (data.includes('error')) {
-                console.log('Error detected. Terminating Python process...');
-                pythonProcess.kill();
-            }
+        // pythonProcess.on('error', (error) => {
+        //     console.error(`Python Process Error: ${error}`);
+        //     pythonProcess.kill(); // Terminate the Python process
 
-        });
-
-        pythonProcess.stderr.on('data', (data) => {
-            console.error(`Python Error: ${data}`);
-            pythonProcess.kill();
-
-        });
-
-        pythonProcess.on('close', async (code) => {
-            console.log(`Python Process Exited with Code: ${code}`);
-            if (code === 0) {
-                // await userModel.findOneAndUpdate({ _id: userId }, { isYoutubeSignIn: true }, { new: true })
-                pythonProcess.kill();
-
-                return res.status(200).json(new apiResponse(200, 'Login Successfull with Youtube', {}, {}))
-            }
-            else {
-                pythonProcess.kill();
-
-                return res.status(500).json(new apiResponse(500, 'Internal Server Error', {}, {}))
-            }
-        });
-
-        pythonProcess.on('error', (error) => {
-            console.error(`Python Process Error: ${error}`);
-            pythonProcess.kill(); // Terminate the Python process
-
-            // Handle any other cleanup tasks if needed
-            // For example, close any open connections, release resources, etc.
-        });
+        //     // Handle any other cleanup tasks if needed
+        //     // For example, close any open connections, release resources, etc.
+        // });
 
 
     } catch (error) {
