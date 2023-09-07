@@ -157,7 +157,7 @@ export const youtubeSignIn1 = async (req: Request, res: Response) => {
     let user: any = req.headers.user
 
     try {
-        let userId = user._id
+        // let userId = user._id
 
         let filePath = path.join(__dirname, '../../../python/youtube_multiple_signin.py');
         filePath = filePath.replace('build\\', '');
@@ -165,7 +165,7 @@ export const youtubeSignIn1 = async (req: Request, res: Response) => {
 
         console.log('filePath :>> ', filePath);
 
-        const pythonProcess = spawn('python', [filePath, userId]);
+        const pythonProcess = spawn('python', [filePath,/* userId*/]);
 
         pythonProcess.stdout.on('data', (data) => {
             console.log(`Python Output: ${data}`);
