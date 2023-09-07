@@ -18,11 +18,33 @@ export const youtubeSignIn = async (req: Request, res: Response) => {
         let userId = user._id
 
         let filePath = path.join(__dirname, '../../../python/youtube_multiple_signin.py');
+        let packageInstallPath = path.join(__dirname, '../../../python/requirements.txt');
         console.log('filePath before build :>> ', filePath);
         // if(filePath.includes())
         filePath = filePath.replace('build\\', '');
         filePath = filePath.replace('build/', '');
+        packageInstallPath = packageInstallPath.replace('build\\', '');
+        packageInstallPath = packageInstallPath.replace('build/', '');
+
         console.log('filePath :>> ', filePath);
+
+        const installPythonDeps = spawn('pip', ['install', '-r', packageInstallPath]);
+        installPythonDeps.stdout.on('data', (data) => {
+            console.log(`stdout: ${data}`);
+        });
+
+        installPythonDeps.stderr.on('data', (data) => {
+            console.error(`stderr: ${data}`);
+        });
+
+        installPythonDeps.on('close', (code) => {
+            if (code === 0) {
+                console.log('Python dependencies installed successfully');
+                // Now you can proceed to run your Python script
+            } else {
+                console.error(`Error: Python dependency installation failed with code ${code}`);
+            }
+        });
 
         const pythonProcess = spawn('python', [filePath, userId]);
 
