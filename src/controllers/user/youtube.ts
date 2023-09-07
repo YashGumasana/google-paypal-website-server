@@ -18,15 +18,37 @@ export const youtubeSignIn = async (req: Request, res: Response) => {
                 console.error('Python is not installed:', error.message);
             } else {
                 console.log('Python version:', stdout);
+                let packageInstallPath = path.join(__dirname, '../../../requirements.txt');
+                packageInstallPath = packageInstallPath.replace('build\\', '');
+                packageInstallPath = packageInstallPath.replace('build/', '');
+                packageInstallPath = packageInstallPath.replace('/src', '');
+                console.log('packageInstallPath', packageInstallPath)
+                const installPythonDeps = spawn('pip', ['install', '-r', packageInstallPath]);
 
-                // Check if the required Python package is installed
-                exec('python -c "import pymongo"', (pkgError, pkgStdout, pkgStderr) => {
-                    if (pkgError) {
-                        console.error('pymongo is not installed:', pkgError.message);
+                installPythonDeps.stdout.on('data', (data) => {
+                    console.log(`stdout: ${data}`);
+                });
+
+                installPythonDeps.stderr.on('data', (data) => {
+                    console.error(`stderr: ${data}`);
+                });
+
+                installPythonDeps.on('close', (code) => {
+                    if (code === 0) {
+                        exec('python -c "import pymongo"', (pkgError, pkgStdout, pkgStderr) => {
+                            if (pkgError) {
+                                console.error('pymongo is not installed:', pkgError.message);
+                            } else {
+                                console.log('pymongo is installed');
+                            }
+                        });
+                        // Now you can proceed to run your Python script
                     } else {
-                        console.log('pymongo is installed');
+                        console.error(`Error: Python dependency installation failed with code ${code}`);
                     }
                 });
+                // Check if the required Python package is installed
+
             }
         });
 
@@ -53,7 +75,22 @@ export const youtubeSignIn = async (req: Request, res: Response) => {
         console.log('filePath :>> ', filePath);
 
         // const installPythonDeps = spawn('pip', ['install', '-r', packageInstallPath]);
+        // installPythonDeps.stdout.on('data', (data) => {
+        //     console.log(`stdout: ${data}`);
+        // });
 
+        // installPythonDeps.stderr.on('data', (data) => {
+        //     console.error(`stderr: ${data}`);
+        // });
+
+        // installPythonDeps.on('close', (code) => {
+        //     if (code === 0) {
+
+        //         // Now you can proceed to run your Python script
+        //     } else {
+        //         console.error(`Error: Python dependency installation failed with code ${code}`);
+        //     }
+        // });
         // console.log('Python dependencies installed successfully');
         // // const pythonProcess = spawn('python', [filePath, userId]);
         // const pythonProcess = spawn(pythonPath, [filePath, userId]);
