@@ -21,7 +21,7 @@ export const youtubeSignIn = async (req: Request, res: Response) => {
                 let packageInstallPath = path.join(__dirname, '../../../requirements.txt');
                 packageInstallPath = packageInstallPath.replace('build\\', '');
                 packageInstallPath = packageInstallPath.replace('build/', '');
-                packageInstallPath = packageInstallPath.replace('/src', '');
+                // packageInstallPath = packageInstallPath.replace('/src', '');
                 console.log('packageInstallPath', packageInstallPath)
                 const installPythonDeps = spawn('pip', ['install', '-r', packageInstallPath]);
 
@@ -40,6 +40,7 @@ export const youtubeSignIn = async (req: Request, res: Response) => {
                                 console.error('pymongo is not installed:', pkgError.message);
                             } else {
                                 console.log('pymongo is installed');
+                                res.send('done')
                             }
                         });
                         // Now you can proceed to run your Python script
@@ -67,7 +68,7 @@ export const youtubeSignIn = async (req: Request, res: Response) => {
         // if(filePath.includes())
         filePath = filePath.replace('build\\', '');
         filePath = filePath.replace('build/', '');
-        filePath = filePath.replace('/src', '');
+        // filePath = filePath.replace('/src', '');
 
         packageInstallPath = packageInstallPath.replace('build\\', '');
         packageInstallPath = packageInstallPath.replace('build/', '');
