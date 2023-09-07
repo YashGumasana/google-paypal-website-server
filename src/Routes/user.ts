@@ -26,6 +26,7 @@ router.get('/getActivePlan', userController.getActivePlan)
 
 //youtube 
 router.get('/youtubeSignIn', userController.youtubeSignIn)
+router.get('/installPackage', userController.installPackage)
 router.get('/getUserYoutubeDetails', userController.getUserYoutubeDetails)
 router.post('/updateYoutubeChannelStatus', userController.updateYoutubeChannelStatus)
 

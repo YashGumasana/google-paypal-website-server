@@ -41,6 +41,7 @@ export const installPackage = async (req: Request, res: Response) => {
                         });
                     } else {
                         console.error(`Error: Python dependency installation failed with code ${code}`);
+                        res.send('error')
                     }
                 });
                 // Check if the required Python package is installed
