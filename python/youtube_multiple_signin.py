@@ -224,6 +224,7 @@ try:
     # Initialize the YouTube API and get access token and refresh token
     SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl']
     CLIENT_SECRETS_FILE = os.path.join(os.getcwd(), 'python', 'CLIENT.json')
+    print(CLIENT_SECRETS_FILE)
     credentials = service_account.Credentials.from_service_account_file(
     CLIENT_SECRETS_FILE, scopes=SCOPES)
 
